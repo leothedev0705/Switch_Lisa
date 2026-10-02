@@ -1,6 +1,7 @@
 import React from 'react';
-import { RoleView } from '../types';
-import { ShieldCheck, Eye, EyeOff, Sparkles, UserCheck, Building2, QrCode, Award } from 'lucide-react';
+import { RoleView, UserAccount } from '../types';
+import { ShieldCheck, Eye, EyeOff, Building2, UserCheck, QrCode, LogIn, User } from 'lucide-react';
+import { SwitchLogo } from './SwitchLogo';
 
 interface NavbarProps {
   roleView: RoleView;
@@ -12,6 +13,8 @@ interface NavbarProps {
   onNavigateScreen: (index: number) => void;
   onOpenSkillCard: () => void;
   onOpenProveIt: () => void;
+  currentUser: UserAccount | null;
+  onOpenLoginModal: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -24,31 +27,20 @@ export const Navbar: React.FC<NavbarProps> = ({
   onNavigateScreen,
   onOpenSkillCard,
   onOpenProveIt,
+  currentUser,
+  onOpenLoginModal,
 }) => {
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-slate-800/80 bg-[#090D16]/90 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 w-full border-b border-slate-800/80 bg-[#090D16]/95 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         
-        {/* Brand Logo */}
+        {/* Brand Logo with exact SWITCH mark */}
         <div className="flex items-center space-x-3 cursor-pointer" onClick={() => onNavigateScreen(0)}>
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 p-0.5 shadow-lg shadow-indigo-500/25 flex items-center justify-center">
-            <div className="w-full h-full bg-[#090D16] rounded-[10px] flex items-center justify-center">
-              <span className="text-xl">⚡</span>
-            </div>
-          </div>
-          <div>
-            <div className="flex items-center space-x-1.5">
-              <span className="text-xl font-black font-display tracking-tight text-white">SWITCH</span>
-              <span className="text-[10px] font-bold bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-1.5 py-0.5 rounded">
-                PROTOTYPE
-              </span>
-            </div>
-            <span className="text-[10px] text-slate-400 font-medium block -mt-0.5">Skill-First Marketplace</span>
-          </div>
+          <SwitchLogo size="md" />
         </div>
 
         {/* Center Quick Navigation Links */}
-        <nav className="hidden md:flex items-center space-x-1 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800">
+        <nav className="hidden md:flex items-center space-x-1 bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800">
           <button
             onClick={() => onNavigateScreen(0)}
             className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
@@ -71,7 +63,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               activeScreenIndex === 2 ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
             }`}
           >
-            Challenge
+            30-Min Test
           </button>
           <button
             onClick={() => onNavigateScreen(5)}
@@ -97,15 +89,15 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Blind Portfolio Toggle */}
           <button
             onClick={onToggleBlindMode}
-            title="Toggle Blind Portfolio mode: hides college, degree & age; highlights pure skill proof"
+            title="Toggle Blind Mode: hides non-defensible resume bias; focuses on verified skill scores"
             className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition ${
               isBlindMode
-                ? 'bg-purple-950/60 border-purple-500/50 text-purple-300 shadow-lg shadow-purple-500/20'
+                ? 'bg-purple-950/70 border-purple-500/50 text-purple-300 shadow-lg shadow-purple-500/20'
                 : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
             }`}
           >
             {isBlindMode ? <EyeOff className="w-3.5 h-3.5 text-purple-400" /> : <Eye className="w-3.5 h-3.5" />}
-            <span className="hidden sm:inline">{isBlindMode ? 'BLIND MODE: ON' : 'BLIND MODE'}</span>
+            <span className="hidden sm:inline">{isBlindMode ? 'BLIND: ON' : 'BLIND MODE'}</span>
           </button>
 
           {/* Role Perspective Switcher */}
@@ -114,7 +106,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => onToggleRoleView('talent')}
               className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-bold transition ${
                 roleView === 'talent'
-                  ? 'bg-indigo-600 text-white shadow'
+                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
@@ -125,7 +117,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => onToggleRoleView('business')}
               className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-bold transition ${
                 roleView === 'business'
-                  ? 'bg-indigo-600 text-white shadow'
+                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
@@ -134,22 +126,43 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </div>
 
-          {/* Switch Score Badge */}
-          <div
-            onClick={onOpenProveIt}
-            className="flex items-center space-x-1.5 bg-gradient-to-r from-indigo-950 to-purple-950 border border-indigo-500/40 px-3 py-1 rounded-xl cursor-pointer hover:border-indigo-400 transition"
-          >
-            <ShieldCheck className="w-4 h-4 text-indigo-400" />
-            <div className="text-left leading-tight">
-              <span className="text-[9px] uppercase font-bold text-indigo-300 block">SCORE</span>
-              <span className="text-sm font-extrabold text-white font-display">{switchScore}</span>
+          {/* Switch Score Badge (for Talent View) */}
+          {roleView === 'talent' && (
+            <div
+              onClick={onOpenProveIt}
+              className="hidden lg:flex items-center space-x-1.5 bg-gradient-to-r from-indigo-950 to-purple-950 border border-indigo-500/40 px-3 py-1 rounded-xl cursor-pointer hover:border-indigo-400 transition"
+            >
+              <ShieldCheck className="w-4 h-4 text-indigo-400" />
+              <div className="text-left leading-tight">
+                <span className="text-[9px] uppercase font-bold text-indigo-300 block">SCORE</span>
+                <span className="text-sm font-extrabold text-white font-display">{switchScore}</span>
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* User Account / Login Button */}
+          {currentUser ? (
+            <button
+              onClick={onOpenLoginModal}
+              className="flex items-center space-x-2 bg-slate-900 hover:bg-slate-800 border border-indigo-500/40 px-2.5 py-1.5 rounded-xl transition text-xs font-bold text-white"
+            >
+              <img src={currentUser.avatar} alt={currentUser.name} className="w-6 h-6 rounded-full object-cover border border-indigo-500" />
+              <span className="hidden md:inline max-w-[100px] truncate">{currentUser.name}</span>
+            </button>
+          ) : (
+            <button
+              onClick={onOpenLoginModal}
+              className="flex items-center space-x-1.5 bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-xl text-xs font-extrabold shadow-md shadow-indigo-600/30 transition"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span>LOG IN</span>
+            </button>
+          )}
 
           {/* Digital Skill Card Button */}
           <button
             onClick={onOpenSkillCard}
-            className="p-2 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 rounded-xl transition"
+            className="p-2 bg-slate-900 hover:bg-slate-800 text-indigo-300 border border-slate-800 rounded-xl transition"
             title="View Digital Skill Card"
           >
             <QrCode className="w-4 h-4" />

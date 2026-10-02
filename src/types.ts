@@ -1,5 +1,16 @@
 export type RoleView = 'talent' | 'business';
 
+export interface UserAccount {
+  id: string;
+  name: string;
+  email: string;
+  role: RoleView;
+  avatar: string;
+  title: string;
+  switchScore?: number;
+  companyName?: string;
+}
+
 export interface VerifiedSkill {
   id: string;
   name: string;
@@ -49,28 +60,27 @@ export interface ChallengeClip {
   tags: string[];
 }
 
+export type SkillCategoryType = 'video_editing' | 'website_building' | 'logo_design' | 'copywriting' | 'social_media';
+
 export interface Challenge {
   id: string;
   category: string;
+  categoryType: SkillCategoryType;
   title: string;
   instruction: string;
   initialTimer: string; // e.g. "28:43"
-  clips: ChallengeClip[];
+  clips?: ChallengeClip[];
 }
 
 export interface AIAnalysisResult {
   title: string;
   skillName: string;
-  scores: {
-    Storytelling: number;
-    Timing: number;
-    Creativity: number;
-    VisualQuality: number;
-  };
+  scores: Record<string, number>;
   finalScore: number;
   status: 'VERIFIED' | 'PENDING' | 'REJECTED';
   validUntil: string;
   feedbackText: string;
+  metrics?: { label: string; score: number }[];
 }
 
 export interface ProofEvidence {
@@ -94,25 +104,34 @@ export interface Candidate {
   label: string;
   name: string;
   avatar: string;
+  categoryType: SkillCategoryType;
   matchScore: number;
   skills: {
-    Editing: number;
+    Primary: number;
     Creativity: number;
-    SocialMedia: number;
+    Execution: number;
+    [key: string]: number;
   };
+  primarySkillName: string;
   projects: number;
   rating: number;
   recentWorkTitle: string;
+  recentWorkThumbnail?: string;
   switchScore: number;
+  portfolioSamples: { title: string; image: string; type: string }[];
 }
 
 export interface ProjectRequirement {
   prompt: string;
+  categoryType: SkillCategoryType;
   convertedThresholds: {
-    Editing: number;
+    PrimarySkill: number;
     Creativity: number;
-    SocialMedia: number;
+    Execution: number;
+    [key: string]: number;
   };
+  primarySkillName: string;
   budget: string;
   duration: string;
 }
+

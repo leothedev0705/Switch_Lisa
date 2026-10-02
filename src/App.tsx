@@ -5,6 +5,7 @@ import { ProveItModal } from './components/ProveItModal';
 import { DigitalSkillCardModal } from './components/DigitalSkillCardModal';
 import { SkillGapModal } from './components/SkillGapModal';
 import { PerfectSwitchModal } from './components/PerfectSwitchModal';
+import { LoginModal } from './components/LoginModal';
 
 import { Screen1Welcome } from './components/screens/Screen1Welcome';
 import { Screen2Passport } from './components/screens/Screen2Passport';
@@ -15,14 +16,30 @@ import { Screen6Marketplace } from './components/screens/Screen6Marketplace';
 import { Screen7Match } from './components/screens/Screen7Match';
 import { Screen8ProjectComplete } from './components/screens/Screen8ProjectComplete';
 
-import { INITIAL_PROFILE, MOCK_CHALLENGE, MOCK_AI_ANALYSIS } from './data/mockData';
-import { RoleView, VerifiedSkill, Candidate, ProjectRequirement } from './types';
+import { INITIAL_PROFILE, MULTI_SKILL_CHALLENGES, MOCK_AI_ANALYSIS_MAP } from './data/mockData';
+import { RoleView, VerifiedSkill, Candidate, ProjectRequirement, SkillCategoryType, UserAccount } from './types';
 
 export default function App() {
   const [profile, setProfile] = useState(INITIAL_PROFILE);
   const [roleView, setRoleView] = useState<RoleView>('talent');
   const [isBlindMode, setIsBlindMode] = useState<boolean>(false);
   const [activeScreenIndex, setActiveScreenIndex] = useState<number>(0);
+
+  // Authentication & Login state
+  const [loginModalOpen, setLoginModalOpen] = useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useState<UserAccount | null>({
+    id: 'usr_default',
+    name: 'Tanmayee P.',
+    email: 'tanmayee@switch.io',
+    role: 'talent',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200',
+    title: 'Short-Form Video & Visual Content Creator',
+    switchScore: 87,
+  });
+
+  // Active Skill Test State (defaults to logo_design / website_building)
+  const [activeCategory, setActiveCategory] = useState<SkillCategoryType>('website_building');
+  const [currentRequirement, setCurrentRequirement] = useState<ProjectRequirement | null>(null);
 
   // Modals state
   const [proveItModalOpen, setProveItModalOpen] = useState<boolean>(false);
@@ -63,10 +80,25 @@ export default function App() {
     setActiveScreenIndex(7);
   };
 
+  const handleStartSkillTest = (category?: SkillCategoryType) => {
+    if (category) {
+      setActiveCategory(category);
+    }
+    setActiveScreenIndex(2);
+  };
+
+  const handleLoginSuccess = (account: UserAccount) => {
+    setCurrentUser(account);
+    setRoleView(account.role);
+    if (account.role === 'business') {
+      setActiveScreenIndex(5); // Jump straight to marketplace for business hirer
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#090D16] text-slate-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif] bg-grid-pattern relative pb-28 selection:bg-indigo-500 selection:text-white">
       
-      {/* Top Header Navigation */}
+      {/* Top Header Navigation with SwitchLogo & Login */}
       <Navbar
         roleView={roleView}
         onToggleRoleView={(view) => {
@@ -82,6 +114,8 @@ export default function App() {
         onNavigateScreen={(idx) => setActiveScreenIndex(idx)}
         onOpenSkillCard={() => setSkillCardModalOpen(true)}
         onOpenProveIt={() => handleOpenProveIt(profile.skills[0])}
+        currentUser={currentUser}
+        onOpenLoginModal={() => setLoginModalOpen(true)}
       />
 
       {/* Main View Area */}
@@ -90,7 +124,8 @@ export default function App() {
         {activeScreenIndex === 0 && (
           <Screen1Welcome
             onStartPassport={() => setActiveScreenIndex(1)}
-            onOpenChallenge={() => setActiveScreenIndex(2)}
+            onOpenChallenge={(cat) => handleStartSkillTest(cat)}
+            onOpenLoginModal={() => setLoginModalOpen(true)}
           />
         )}
 
@@ -100,20 +135,24 @@ export default function App() {
             isBlindMode={isBlindMode}
             onOpenProveIt={(skill) => handleOpenProveIt(skill)}
             onOpenSkillCard={() => setSkillCardModalOpen(true)}
-            onStartChallenge={() => setActiveScreenIndex(2)}
+            onStartChallenge={() => handleStartSkillTest('website_building')}
           />
         )}
 
         {activeScreenIndex === 2 && (
           <Screen3Challenge
-            challenge={MOCK_CHALLENGE}
-            onSubmitChallenge={() => setActiveScreenIndex(3)}
+            challenge={MULTI_SKILL_CHALLENGES[activeCategory] || MULTI_SKILL_CHALLENGES.video_editing}
+            onSelectSkillTest={(cat) => setActiveCategory(cat)}
+            onSubmitChallenge={(cat) => {
+              setActiveCategory(cat);
+              setActiveScreenIndex(3);
+            }}
           />
         )}
 
         {activeScreenIndex === 3 && (
           <Screen4Analysis
-            analysis={MOCK_AI_ANALYSIS}
+            analysis={MOCK_AI_ANALYSIS_MAP[activeCategory] || MOCK_AI_ANALYSIS_MAP.video_editing}
             onViewProof={() => setActiveScreenIndex(4)}
             onContinueToMarketplace={() => setActiveScreenIndex(5)}
           />
@@ -128,13 +167,17 @@ export default function App() {
 
         {activeScreenIndex === 5 && (
           <Screen6Marketplace
-            onFindTalent={(req) => setActiveScreenIndex(6)}
+            onFindTalent={(req) => {
+              setCurrentRequirement(req);
+              setActiveScreenIndex(6);
+            }}
           />
         )}
 
         {activeScreenIndex === 6 && (
           <Screen7Match
             isBlindMode={isBlindMode}
+            currentRequirement={currentRequirement}
             onSelectCandidateToHire={handleHireCandidate}
             onOpenProveIt={(skill) => handleOpenProveIt(skill)}
           />
@@ -149,11 +192,18 @@ export default function App() {
       </main>
 
       {/* Modals */}
+      <LoginModal
+        isOpen={loginModalOpen}
+        onClose={() => setLoginModalOpen(false)}
+        onLoginSuccess={handleLoginSuccess}
+        initialRole={roleView}
+      />
+
       <ProveItModal
         isOpen={proveItModalOpen}
         onClose={() => setProveItModalOpen(false)}
         skill={selectedProveSkill}
-        candidateName={isBlindMode ? profile.blindCandidateId : profile.name}
+        candidateName={isBlindMode ? profile.blindCandidateId : (currentUser?.name || profile.name)}
       />
 
       <DigitalSkillCardModal
@@ -165,7 +215,7 @@ export default function App() {
       <SkillGapModal
         isOpen={skillGapModalOpen}
         onClose={() => setSkillGapModalOpen(false)}
-        onStartChallenge={() => setActiveScreenIndex(2)}
+        onStartChallenge={() => handleStartSkillTest('logo_design')}
       />
 
       <PerfectSwitchModal
