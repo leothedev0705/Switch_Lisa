@@ -1,96 +1,210 @@
-import { Profile, Challenge, AIAnalysisResult, Candidate, ProjectRequirement, SkillCategoryType } from '../types';
+import { Profile, Challenge, AIAnalysisResult, Candidate, ProjectRequirement, SkillCategoryType, UserAccount } from '../types';
 
-export const INITIAL_PROFILE: Profile = {
-  id: 'tanmayee_01',
-  name: 'TANMAYEE',
-  title: 'Short-Form Video & Visual Content Creator',
-  education: 'BBA • Mumbai',
-  location: 'Mumbai, MH',
-  avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
-  switchScore: 87,
-  xp: 3420,
-  xpLevel: 'Advanced',
-  nextLevelXp: 5000,
-  skills: [
-    {
-      id: 's1',
-      name: 'Video Editing',
-      category: 'Media Production',
-      score: 91,
-      verified: true,
-      growth: [72, 78, 84, 91],
-      lastUpdated: '2 days ago',
-      evidenceCount: 12,
-    },
-    {
-      id: 's2',
-      name: 'Logo & Brand Design',
-      category: 'Visual & UI',
-      score: 84,
-      verified: true,
-      growth: [68, 74, 82, 84],
-      lastUpdated: '1 week ago',
-      evidenceCount: 8,
-    },
-    {
-      id: 's3',
-      name: 'Social Media',
-      category: 'Growth & Strategy',
-      score: 89,
-      verified: true,
-      growth: [81, 85, 89],
-      lastUpdated: '3 days ago',
-      evidenceCount: 10,
-    },
-    {
-      id: 's4',
-      name: 'Website Building',
-      category: 'Web & Frontend',
-      score: 86,
-      verified: true,
-      growth: [70, 76, 86],
-      lastUpdated: '5 days ago',
-      evidenceCount: 6,
-    }
-  ],
-  projectsCompleted: 12,
-  clientRating: 4.9,
-  totalEarnings: '₹48,500',
-  blindCandidateId: 'CANDIDATE #024',
-  stackName: '🔥 CONTENT CREATOR',
-  stackDescription: 'Highly suited for high-retention short-form video & brand engagement campaigns.',
-  badges: [
-    {
-      id: 'b1',
-      name: 'Deadline Machine',
-      icon: '🏆',
-      condition: 'Completed 10 projects on time',
-      unlockedAt: 'Oct 2026',
-      isNew: true,
-    },
-    {
-      id: 'b2',
-      name: 'Top Creator',
-      icon: '🎨',
-      condition: '90+ creativity score achieved',
-      unlockedAt: 'Sep 2026',
-    },
-    {
-      id: 'b3',
-      name: 'Client Favourite',
-      icon: '⭐',
-      condition: '95%+ client satisfaction rating',
-      unlockedAt: 'Aug 2026',
-    },
-    {
-      id: 'b4',
-      name: 'Fast Learner',
-      icon: '⚡',
-      condition: 'Improved a skill by 20+ points in 30 days',
-      unlockedAt: 'Jul 2026',
-    }
-  ]
+export const PROFILES_BY_ID: Record<string, Profile> = {
+  tanmayee_01: {
+    id: 'tanmayee_01',
+    name: 'TANMAYEE P.',
+    title: 'Short-Form Video & Visual Content Creator',
+    education: 'BBA • Mumbai',
+    location: 'Mumbai, MH',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
+    switchScore: 87,
+    xp: 3420,
+    xpLevel: 'Advanced',
+    nextLevelXp: 5000,
+    skills: [
+      {
+        id: 's1',
+        name: 'Video Editing',
+        category: 'Media Production',
+        score: 91,
+        verified: true,
+        growth: [72, 78, 84, 91],
+        lastUpdated: '2 days ago',
+        evidenceCount: 12,
+      },
+      {
+        id: 's2',
+        name: 'Reel Pacing & Beat Sync',
+        category: 'Media',
+        score: 88,
+        verified: true,
+        growth: [70, 78, 88],
+        lastUpdated: '1 week ago',
+        evidenceCount: 8,
+      },
+      {
+        id: 's3',
+        name: 'Social Media Strategy',
+        category: 'Growth & Strategy',
+        score: 89,
+        verified: true,
+        growth: [81, 85, 89],
+        lastUpdated: '3 days ago',
+        evidenceCount: 10,
+      }
+    ],
+    projectsCompleted: 12,
+    clientRating: 4.9,
+    totalEarnings: '₹48,500',
+    blindCandidateId: 'CANDIDATE #024',
+    stackName: '🔥 CONTENT CREATOR',
+    stackDescription: 'Highly suited for high-retention short-form video & viral Reels campaigns.',
+    badges: [
+      { id: 'b1', name: 'Deadline Machine', icon: '🏆', condition: 'Completed 10 projects on time', unlockedAt: 'Oct 2026', isNew: true },
+      { id: 'b2', name: 'Top Creator', icon: '🎨', condition: '90+ creativity score achieved', unlockedAt: 'Sep 2026' },
+      { id: 'b3', name: 'Client Favourite', icon: '⭐', condition: '95%+ client satisfaction rating', unlockedAt: 'Aug 2026' }
+    ]
+  },
+  rohan_01: {
+    id: 'rohan_01',
+    name: 'ROHAN MEHTA',
+    title: 'Brand Identity & Logo Specialist',
+    education: 'B.Des • National Institute of Design',
+    location: 'Bengaluru, KA',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
+    switchScore: 95,
+    xp: 4850,
+    xpLevel: 'Expert',
+    nextLevelXp: 6000,
+    skills: [
+      {
+        id: 's_logo_1',
+        name: 'Logo & Brand Design',
+        category: 'Visual Design',
+        score: 95,
+        verified: true,
+        growth: [80, 88, 92, 95],
+        lastUpdated: 'Yesterday',
+        evidenceCount: 24,
+      },
+      {
+        id: 's_logo_2',
+        name: 'Vector Art Geometry',
+        category: 'Vector Art',
+        score: 96,
+        verified: true,
+        growth: [85, 90, 96],
+        lastUpdated: '3 days ago',
+        evidenceCount: 18,
+      },
+      {
+        id: 's_logo_3',
+        name: 'Typography & Guidelines',
+        category: 'Branding',
+        score: 92,
+        verified: true,
+        growth: [78, 86, 92],
+        lastUpdated: '5 days ago',
+        evidenceCount: 15,
+      }
+    ],
+    projectsCompleted: 24,
+    clientRating: 4.95,
+    totalEarnings: '₹1,24,000',
+    blindCandidateId: 'CANDIDATE #091',
+    stackName: '🎨 BRAND DESIGNER',
+    stackDescription: 'Specialized in minimalist vector logos, emblem marks, brand guidelines, and dark theme visual identity.',
+    badges: [
+      { id: 'b_logo1', name: 'Vector Master', icon: '🎨', condition: '95+ vector precision score', unlockedAt: 'Sep 2026', isNew: true },
+      { id: 'b_logo2', name: 'Brand Legend', icon: '💎', condition: 'Completed 20 brand identity packages', unlockedAt: 'Aug 2026' }
+    ]
+  },
+  devansh_01: {
+    id: 'devansh_01',
+    name: 'DEVANSH GUPTA',
+    title: 'Fullstack & Web Builder Specialist',
+    education: 'B.Tech CS • IIT Bombay',
+    location: 'Delhi, DL',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
+    switchScore: 96,
+    xp: 5120,
+    xpLevel: 'Expert',
+    nextLevelXp: 6500,
+    skills: [
+      {
+        id: 's_web_1',
+        name: 'Website Building & Webflow',
+        category: 'Web Development',
+        score: 96,
+        verified: true,
+        growth: [82, 90, 96],
+        lastUpdated: 'Today',
+        evidenceCount: 31,
+      },
+      {
+        id: 's_web_2',
+        name: 'Responsive UI Layout Math',
+        category: 'Frontend CSS',
+        score: 97,
+        verified: true,
+        growth: [88, 93, 97],
+        lastUpdated: '2 days ago',
+        evidenceCount: 28,
+      },
+      {
+        id: 's_web_3',
+        name: 'React & Tailwind Component UI',
+        category: 'Frontend Engineering',
+        score: 95,
+        verified: true,
+        growth: [80, 89, 95],
+        lastUpdated: '4 days ago',
+        evidenceCount: 22,
+      }
+    ],
+    projectsCompleted: 31,
+    clientRating: 4.98,
+    totalEarnings: '₹2,10,000',
+    blindCandidateId: 'CANDIDATE #104',
+    stackName: '💻 LANDING PAGE CREATOR',
+    stackDescription: 'Expert in high-converting landing pages, fast React storefronts, and dark mode UI systems.',
+    badges: [
+      { id: 'b_web1', name: 'Speed Demon', icon: '⚡', condition: 'Sub-second web performance load score', unlockedAt: 'Oct 2026', isNew: true },
+      { id: 'b_web2', name: 'Fullstack Pro', icon: '💻', condition: 'Built 30 responsive web portals', unlockedAt: 'Aug 2026' }
+    ]
+  }
 };
+
+export const INITIAL_PROFILE: Profile = PROFILES_BY_ID.tanmayee_01;
+
+// Helper function to return user profile consistent with account
+export function getProfileForAccount(account: UserAccount | null): Profile {
+  if (!account) return PROFILES_BY_ID.tanmayee_01;
+
+  if (account.name.toLowerCase().includes('rohan')) {
+    return PROFILES_BY_ID.rohan_01;
+  } else if (account.name.toLowerCase().includes('devansh')) {
+    return PROFILES_BY_ID.devansh_01;
+  } else if (account.role === 'business') {
+    return {
+      id: 'biz_alex_01',
+      name: account.name || 'ALEX RIVERA',
+      title: account.title || 'VP of Digital Experience',
+      education: 'MBA • TechStudio Global',
+      location: 'San Francisco, CA',
+      avatar: account.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
+      switchScore: 98,
+      xp: 6000,
+      xpLevel: 'Expert',
+      nextLevelXp: 7000,
+      skills: [
+        { id: 's_biz_1', name: 'Talent Hiring & Briefing', category: 'Management', score: 98, verified: true, growth: [90, 98], lastUpdated: 'Today', evidenceCount: 45 }
+      ],
+      projectsCompleted: 45,
+      clientRating: 5.0,
+      totalEarnings: '₹5,00,000 Spent',
+      blindCandidateId: 'BUSINESS #001',
+      stackName: '🏢 BUSINESS HIRER',
+      stackDescription: 'Hiring verified talent for design, web building, and marketing campaigns.',
+      badges: [
+        { id: 'b_biz1', name: 'Top Hirer', icon: '🏢', condition: 'Posted & funded 40+ verified contracts', unlockedAt: 'Oct 2026', isNew: true }
+      ]
+    };
+  }
+
+  return PROFILES_BY_ID.tanmayee_01;
+}
 
 // MULTI-SKILL CHALLENGES (Website Building, Logo Design, Video Editing, Copywriting, Social Media)
 export const MULTI_SKILL_CHALLENGES: Record<SkillCategoryType, Challenge> = {
@@ -305,7 +419,7 @@ export const ALL_CANDIDATES: Candidate[] = [
     recentWorkThumbnail: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&q=80&w=400',
     switchScore: 95,
     portfolioSamples: [
-      { title: 'SWITCH Switchable Monogram Logo', image: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&q=80&w=400', type: 'Logo Vector' },
+      { title: 'SWITCH Monogram Logo', image: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&q=80&w=400', type: 'Logo Vector' },
       { title: 'Apex AI Brand Guidelines & Typography', image: 'https://images.unsplash.com/photo-1600132806370-bf17e65e942f?auto=format&fit=crop&q=80&w=400', type: 'Brand Kit' },
       { title: 'Velvet Cafe Emblem Logo', image: 'https://images.unsplash.com/photo-1572044162444-ad60f128bdea?auto=format&fit=crop&q=80&w=400', type: 'Emblem Logo' },
     ]
@@ -439,32 +553,6 @@ export const ALL_CANDIDATES: Candidate[] = [
     switchScore: 88,
     portfolioSamples: [
       { title: 'Sneaker Launch Beat Sync Cut', image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=400', type: 'Promo Video' }
-    ]
-  },
-
-  // --- COPYWRITERS ---
-  {
-    id: 'cand_copy_1',
-    label: 'Candidate A (Copywriter)',
-    name: 'Ananya Roy',
-    avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=400',
-    categoryType: 'copywriting',
-    primarySkillName: 'Copywriting & Ad Hooks',
-    matchScore: 94,
-    skills: {
-      Primary: 94,
-      Creativity: 93,
-      Execution: 95,
-      Copywriting: 94,
-      SEO: 90,
-    },
-    projects: 22,
-    rating: 4.92,
-    recentWorkTitle: 'Viral Meta Ad Hook Copy ($140k Ad Spend Generated)',
-    recentWorkThumbnail: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&q=80&w=400',
-    switchScore: 93,
-    portfolioSamples: [
-      { title: 'High-Converting Landing Page Copy', image: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&q=80&w=400', type: 'Sales Copy' }
     ]
   }
 ];

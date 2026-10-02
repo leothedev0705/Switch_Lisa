@@ -17,12 +17,11 @@ import { Screen6Marketplace } from './components/screens/Screen6Marketplace';
 import { Screen7Match } from './components/screens/Screen7Match';
 import { Screen8ProjectComplete } from './components/screens/Screen8ProjectComplete';
 
-import { INITIAL_PROFILE, MULTI_SKILL_CHALLENGES, MOCK_AI_ANALYSIS_MAP } from './data/mockData';
+import { INITIAL_PROFILE, MULTI_SKILL_CHALLENGES, MOCK_AI_ANALYSIS_MAP, getProfileForAccount } from './data/mockData';
 import { RoleView, VerifiedSkill, Candidate, ProjectRequirement, SkillCategoryType, UserAccount } from './types';
 import { ShieldCheck, Building2, UserCheck, ArrowRight } from 'lucide-react';
 
 export default function App() {
-  const [profile, setProfile] = useState(INITIAL_PROFILE);
   const [roleView, setRoleView] = useState<RoleView>('talent');
   const [isBlindMode, setIsBlindMode] = useState<boolean>(false);
   const [activeScreenIndex, setActiveScreenIndex] = useState<number>(0);
@@ -32,6 +31,9 @@ export default function App() {
   const [loginModalOpen, setLoginModalOpen] = useState<boolean>(false);
   const [loginModalRole, setLoginModalRole] = useState<RoleView>('talent');
   const [switchAuthMessage, setSwitchAuthMessage] = useState<string | null>(null);
+
+  // Dynamically derive current user's profile based on authenticated account
+  const profile = getProfileForAccount(currentUser);
 
   // Active Skill Test State
   const [activeCategory, setActiveCategory] = useState<SkillCategoryType>('website_building');
@@ -88,6 +90,15 @@ export default function App() {
     setRoleView(account.role);
     setSwitchAuthMessage(null);
 
+    // Auto-align default active challenge based on talent type
+    if (account.name.toLowerCase().includes('rohan')) {
+      setActiveCategory('logo_design');
+    } else if (account.name.toLowerCase().includes('devansh')) {
+      setActiveCategory('website_building');
+    } else if (account.name.toLowerCase().includes('tanmayee')) {
+      setActiveCategory('video_editing');
+    }
+
     if (account.role === 'business') {
       setActiveScreenIndex(5); // Jump straight to marketplace for business hirer
     } else {
@@ -97,7 +108,6 @@ export default function App() {
 
   // STRICT ROLE SWITCHING AUTHENTICATION GUARD
   const handleRequestRoleSwitch = (targetRole: RoleView) => {
-    // If user is not logged in or currentUser's role doesn't match targetRole
     if (!currentUser || currentUser.role !== targetRole) {
       setLoginModalRole(targetRole);
       setSwitchAuthMessage(
@@ -107,7 +117,6 @@ export default function App() {
       );
       setLoginModalOpen(true);
     } else {
-      // User is already logged in with the relevant account type
       setRoleView(targetRole);
       if (targetRole === 'business') {
         setActiveScreenIndex(5);
@@ -237,7 +246,7 @@ export default function App() {
                     isBlindMode={isBlindMode}
                     onOpenProveIt={(skill) => handleOpenProveIt(skill)}
                     onOpenSkillCard={() => setSkillCardModalOpen(true)}
-                    onStartChallenge={() => handleStartSkillTest('website_building')}
+                    onStartChallenge={() => handleStartSkillTest(activeCategory)}
                   />
                 )}
 
