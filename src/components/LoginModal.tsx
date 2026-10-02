@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Building2, UserCheck, Mail, Lock, ArrowRight, Sparkles, CheckCircle2, ShieldCheck, User } from 'lucide-react';
+import { X, Building2, UserCheck, Mail, Lock, ArrowRight, Sparkles, AlertCircle } from 'lucide-react';
 import { RoleView, UserAccount } from '../types';
 import { SwitchLogo } from './SwitchLogo';
 
@@ -9,6 +9,7 @@ interface LoginModalProps {
   onClose: () => void;
   onLoginSuccess: (account: UserAccount) => void;
   initialRole?: RoleView;
+  switchMessage?: string | null;
 }
 
 export const LoginModal: React.FC<LoginModalProps> = ({
@@ -16,6 +17,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   onClose,
   onLoginSuccess,
   initialRole = 'talent',
+  switchMessage = null,
 }) => {
   const [role, setRole] = useState<RoleView>(initialRole);
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
@@ -127,11 +129,20 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               <SwitchLogo size="md" />
             </div>
             <h2 className="text-2xl font-black font-display text-white">
-              {isSignUp ? 'Create SWITCH Account' : 'Welcome Back to SWITCH'}
+              {role === 'business' ? 'Log in as Business Hirer' : 'Log in as Freelance Talent'}
             </h2>
-            <p className="text-xs text-slate-400 mt-1">
-              Select your account type to access verified talent or skill passports
-            </p>
+            
+            {/* Custom switch notification banner */}
+            {switchMessage ? (
+              <div className="mt-2 p-2.5 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-300 text-xs font-semibold flex items-center justify-center space-x-1.5">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{switchMessage}</span>
+              </div>
+            ) : (
+              <p className="text-xs text-slate-400 mt-1">
+                Authenticate with a valid account to switch portals
+              </p>
+            )}
           </div>
 
           {/* Role Switcher Tabs */}
@@ -141,12 +152,12 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               onClick={() => setRole('business')}
               className={`py-3 px-4 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-2 ${
                 role === 'business'
-                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg'
+                  ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
               <Building2 className="w-4 h-4" />
-              <span>Business / Hirer</span>
+              <span>Business Hirer</span>
             </button>
 
             <button
@@ -159,7 +170,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               }`}
             >
               <UserCheck className="w-4 h-4" />
-              <span>Talent / Freelancer</span>
+              <span>Freelance Talent</span>
             </button>
           </div>
 
@@ -168,23 +179,20 @@ export const LoginModal: React.FC<LoginModalProps> = ({
             {isSignUp && (
               <div>
                 <label className="block text-[11px] uppercase font-bold text-slate-400 mb-1">Full Name</label>
-                <div className="relative">
-                  <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder={role === 'business' ? 'e.g. Sarah Jenkins' : 'e.g. Tanmayee P.'}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-600 focus:border-indigo-500 focus:outline-none"
-                  />
-                </div>
+                <input
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder={role === 'business' ? 'e.g. Sarah Jenkins' : 'e.g. Tanmayee P.'}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-600 focus:border-indigo-500 focus:outline-none"
+                />
               </div>
             )}
 
             <div>
               <label className="block text-[11px] uppercase font-bold text-slate-400 mb-1">
-                {role === 'business' ? 'Business Email' : 'Email Address'}
+                {role === 'business' ? 'Business Email' : 'Talent Email'}
               </label>
               <div className="relative">
                 <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
@@ -214,107 +222,65 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               </div>
             </div>
 
-            {isSignUp && (
-              <div>
-                <label className="block text-[11px] uppercase font-bold text-slate-400 mb-1">
-                  {role === 'business' ? 'Company Name' : 'Primary Skill Title'}
-                </label>
-                <input
-                  type="text"
-                  value={companyOrTitle}
-                  onChange={(e) => setCompanyOrTitle(e.target.value)}
-                  placeholder={role === 'business' ? 'e.g. Acme Media Corp' : 'e.g. Logo Designer & Brand Specialist'}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-600 focus:border-indigo-500 focus:outline-none"
-                />
-              </div>
-            )}
-
             <button
               type="submit"
               disabled={isLoading}
               className="w-full py-3.5 bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-extrabold text-sm rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center justify-center space-x-2 mt-2"
             >
               {isLoading ? (
-                <span>Authenticating...</span>
+                <span>Authenticating Account...</span>
               ) : (
                 <>
-                  <span>{isSignUp ? `SIGN UP AS ${role.toUpperCase()}` : `LOG IN AS ${role.toUpperCase()}`}</span>
+                  <span>LOG IN AS {role.toUpperCase()}</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
             </button>
           </form>
 
-          {/* Quick Demo Login Preset Buttons */}
+          {/* Quick Demo Logins */}
           <div className="mt-6 pt-5 border-t border-slate-800/80">
             <span className="text-[10px] uppercase font-extrabold text-indigo-400 tracking-wider block mb-2 text-center">
-              ⚡ Quick 1-Click Demo Accounts
+              ⚡ Instant 1-Click Demo Accounts
             </span>
 
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => handleDemoLogin('business')}
-                className="p-2.5 bg-slate-900/90 hover:bg-slate-800 border border-slate-800 rounded-xl text-left transition text-xs"
+                className="p-2.5 bg-slate-900/90 hover:bg-slate-800 border border-purple-500/30 rounded-xl text-left transition text-xs"
               >
-                <span className="font-bold text-indigo-300 block">🏢 Demo Business Hirer</span>
+                <span className="font-bold text-purple-300 block">🏢 Demo Business Hirer</span>
                 <span className="text-[10px] text-slate-400">TechStudio Inc.</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleDemoLogin('talent_design')}
-                className="p-2.5 bg-slate-900/90 hover:bg-slate-800 border border-slate-800 rounded-xl text-left transition text-xs"
+                className="p-2.5 bg-slate-900/90 hover:bg-slate-800 border border-indigo-500/30 rounded-xl text-left transition text-xs"
               >
-                <span className="font-bold text-purple-300 block">🎨 Demo Logo Designer</span>
-                <span className="text-[10px] text-slate-400">Rohan Mehta (91 Score)</span>
+                <span className="font-bold text-indigo-300 block">🎨 Demo Logo Designer</span>
+                <span className="text-[10px] text-slate-400">Rohan Mehta</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleDemoLogin('talent_dev')}
-                className="p-2.5 bg-slate-900/90 hover:bg-slate-800 border border-slate-800 rounded-xl text-left transition text-xs"
+                className="p-2.5 bg-slate-900/90 hover:bg-slate-800 border border-cyan-500/30 rounded-xl text-left transition text-xs"
               >
                 <span className="font-bold text-cyan-300 block">💻 Demo Web Builder</span>
-                <span className="text-[10px] text-slate-400">Devansh Gupta (94 Score)</span>
+                <span className="text-[10px] text-slate-400">Devansh Gupta</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleDemoLogin('talent_video')}
-                className="p-2.5 bg-slate-900/90 hover:bg-slate-800 border border-slate-800 rounded-xl text-left transition text-xs"
+                className="p-2.5 bg-slate-900/90 hover:bg-slate-800 border border-emerald-500/30 rounded-xl text-left transition text-xs"
               >
                 <span className="font-bold text-emerald-300 block">🎬 Demo Video Editor</span>
-                <span className="text-[10px] text-slate-400">Tanmayee P. (87 Score)</span>
+                <span className="text-[10px] text-slate-400">Tanmayee P.</span>
               </button>
             </div>
-          </div>
-
-          {/* Toggle Sign Up / Log In */}
-          <div className="mt-5 text-center text-xs text-slate-400">
-            {isSignUp ? (
-              <span>
-                Already have an account?{' '}
-                <button
-                  type="button"
-                  onClick={() => setIsSignUp(false)}
-                  className="text-indigo-400 font-bold hover:underline"
-                >
-                  Log In
-                </button>
-              </span>
-            ) : (
-              <span>
-                Need a new account?{' '}
-                <button
-                  type="button"
-                  onClick={() => setIsSignUp(true)}
-                  className="text-indigo-400 font-bold hover:underline"
-                >
-                  Create Account
-                </button>
-              </span>
-            )}
           </div>
         </motion.div>
       </div>
