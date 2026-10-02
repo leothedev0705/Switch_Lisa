@@ -18,6 +18,7 @@ import { Screen8ProjectComplete } from './components/screens/Screen8ProjectCompl
 
 import { INITIAL_PROFILE, MULTI_SKILL_CHALLENGES, MOCK_AI_ANALYSIS_MAP } from './data/mockData';
 import { RoleView, VerifiedSkill, Candidate, ProjectRequirement, SkillCategoryType, UserAccount } from './types';
+import { ShieldCheck, Lock, Building2, UserCheck, ArrowRight } from 'lucide-react';
 
 export default function App() {
   const [profile, setProfile] = useState(INITIAL_PROFILE);
@@ -37,7 +38,7 @@ export default function App() {
     switchScore: 87,
   });
 
-  // Active Skill Test State (defaults to logo_design / website_building)
+  // Active Skill Test State
   const [activeCategory, setActiveCategory] = useState<SkillCategoryType>('website_building');
   const [currentRequirement, setCurrentRequirement] = useState<ProjectRequirement | null>(null);
 
@@ -76,7 +77,6 @@ export default function App() {
   };
 
   const handleHireCandidate = (candidate: Candidate) => {
-    // When employer hires candidate, progress to Screen 8 (Project Complete)
     setActiveScreenIndex(7);
   };
 
@@ -92,8 +92,14 @@ export default function App() {
     setRoleView(account.role);
     if (account.role === 'business') {
       setActiveScreenIndex(5); // Jump straight to marketplace for business hirer
+    } else {
+      setActiveScreenIndex(1); // Jump straight to talent passport
     }
   };
+
+  // Helper check if screen is allowed for active role
+  const isBusinessScreen = activeScreenIndex >= 5;
+  const isTalentScreen = activeScreenIndex < 5 || activeScreenIndex === 7;
 
   return (
     <div className="min-h-screen bg-[#090D16] text-slate-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif] bg-grid-pattern relative pb-28 selection:bg-indigo-500 selection:text-white">
@@ -104,7 +110,9 @@ export default function App() {
         onToggleRoleView={(view) => {
           setRoleView(view);
           if (view === 'business' && activeScreenIndex < 5) {
-            setActiveScreenIndex(5); // Switch to marketplace when toggled to business view
+            setActiveScreenIndex(5);
+          } else if (view === 'talent' && activeScreenIndex >= 5 && activeScreenIndex !== 7) {
+            setActiveScreenIndex(1);
           }
         }}
         isBlindMode={isBlindMode}
@@ -121,73 +129,152 @@ export default function App() {
       {/* Main View Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         
-        {activeScreenIndex === 0 && (
-          <Screen1Welcome
-            onStartPassport={() => setActiveScreenIndex(1)}
-            onOpenChallenge={(cat) => handleStartSkillTest(cat)}
-            onOpenLoginModal={() => setLoginModalOpen(true)}
-          />
+        {/* ========================================================
+            BUSINESS ROLE GUARD: Trying to view Talent pages as Business
+           ======================================================== */}
+        {roleView === 'business' && !isBusinessScreen && (
+          <div className="py-16 text-center max-w-xl mx-auto space-y-4">
+            <div className="p-4 bg-purple-950/60 border border-purple-500/40 rounded-3xl w-max mx-auto text-purple-400">
+              <Building2 className="w-10 h-10" />
+            </div>
+            <h2 className="text-2xl font-black text-white font-display">Business Hirer Portal Active</h2>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              You are logged in under <span className="text-purple-300 font-bold">Business Hirer View</span>. Talent testing & personal skill passport pages are restricted to job seeker profiles.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+              <button
+                onClick={() => setActiveScreenIndex(5)}
+                className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-extrabold text-xs rounded-xl shadow-lg flex items-center space-x-1.5"
+              >
+                <span>GO TO HIRER MARKETPLACE</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => {
+                  setRoleView('talent');
+                  setActiveScreenIndex(1);
+                }}
+                className="px-5 py-3 bg-slate-900 border border-slate-700 text-slate-300 font-bold text-xs rounded-xl hover:text-white"
+              >
+                Switch to Freelancer Mode
+              </button>
+            </div>
+          </div>
         )}
 
-        {activeScreenIndex === 1 && (
-          <Screen2Passport
-            profile={profile}
-            isBlindMode={isBlindMode}
-            onOpenProveIt={(skill) => handleOpenProveIt(skill)}
-            onOpenSkillCard={() => setSkillCardModalOpen(true)}
-            onStartChallenge={() => handleStartSkillTest('website_building')}
-          />
+        {/* ========================================================
+            TALENT ROLE GUARD: Trying to view Business pages as Talent
+           ======================================================== */}
+        {roleView === 'talent' && activeScreenIndex === 5 && (
+          <div className="py-16 text-center max-w-xl mx-auto space-y-4">
+            <div className="p-4 bg-indigo-950/60 border border-indigo-500/40 rounded-3xl w-max mx-auto text-indigo-400">
+              <UserCheck className="w-10 h-10" />
+            </div>
+            <h2 className="text-2xl font-black text-white font-display">Freelancer Talent View Active</h2>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              The Hirer Prompt Converter is reserved for Business Accounts posting job requirements. Switch to Business mode to create project listings or explore matching contracts.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+              <button
+                onClick={() => {
+                  setRoleView('business');
+                  setActiveScreenIndex(5);
+                }}
+                className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-extrabold text-xs rounded-xl shadow-lg flex items-center space-x-1.5"
+              >
+                <span>SWITCH TO BUSINESS HIRER MODE</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setActiveScreenIndex(1)}
+                className="px-5 py-3 bg-slate-900 border border-slate-700 text-slate-300 font-bold text-xs rounded-xl hover:text-white"
+              >
+                Back to My Skill Passport
+              </button>
+            </div>
+          </div>
         )}
 
-        {activeScreenIndex === 2 && (
-          <Screen3Challenge
-            challenge={MULTI_SKILL_CHALLENGES[activeCategory] || MULTI_SKILL_CHALLENGES.video_editing}
-            onSelectSkillTest={(cat) => setActiveCategory(cat)}
-            onSubmitChallenge={(cat) => {
-              setActiveCategory(cat);
-              setActiveScreenIndex(3);
-            }}
-          />
-        )}
+        {/* ========================================================
+            ALLOWED SCREENS RENDER LOGIC
+           ======================================================== */}
+        {((roleView === 'talent' && activeScreenIndex !== 5) || (roleView === 'business' && isBusinessScreen)) && (
+          <>
+            {activeScreenIndex === 0 && (
+              <Screen1Welcome
+                onStartPassport={() => setActiveScreenIndex(1)}
+                onOpenChallenge={(cat) => handleStartSkillTest(cat)}
+                onOpenLoginModal={() => setLoginModalOpen(true)}
+              />
+            )}
 
-        {activeScreenIndex === 3 && (
-          <Screen4Analysis
-            analysis={MOCK_AI_ANALYSIS_MAP[activeCategory] || MOCK_AI_ANALYSIS_MAP.video_editing}
-            onViewProof={() => setActiveScreenIndex(4)}
-            onContinueToMarketplace={() => setActiveScreenIndex(5)}
-          />
-        )}
+            {activeScreenIndex === 1 && (
+              <Screen2Passport
+                profile={profile}
+                isBlindMode={isBlindMode}
+                onOpenProveIt={(skill) => handleOpenProveIt(skill)}
+                onOpenSkillCard={() => setSkillCardModalOpen(true)}
+                onStartChallenge={() => handleStartSkillTest('website_building')}
+              />
+            )}
 
-        {activeScreenIndex === 4 && (
-          <Screen5Proof
-            onBackToPassport={() => setActiveScreenIndex(1)}
-            onOpenSkillCard={() => setSkillCardModalOpen(true)}
-          />
-        )}
+            {activeScreenIndex === 2 && (
+              <Screen3Challenge
+                challenge={MULTI_SKILL_CHALLENGES[activeCategory] || MULTI_SKILL_CHALLENGES.video_editing}
+                onSelectSkillTest={(cat) => setActiveCategory(cat)}
+                onSubmitChallenge={(cat) => {
+                  setActiveCategory(cat);
+                  setActiveScreenIndex(3);
+                }}
+              />
+            )}
 
-        {activeScreenIndex === 5 && (
-          <Screen6Marketplace
-            onFindTalent={(req) => {
-              setCurrentRequirement(req);
-              setActiveScreenIndex(6);
-            }}
-          />
-        )}
+            {activeScreenIndex === 3 && (
+              <Screen4Analysis
+                analysis={MOCK_AI_ANALYSIS_MAP[activeCategory] || MOCK_AI_ANALYSIS_MAP.video_editing}
+                onViewProof={() => setActiveScreenIndex(4)}
+                onContinueToMarketplace={() => {
+                  if (roleView === 'talent') {
+                    setPerfectSwitchModalOpen(true);
+                  } else {
+                    setActiveScreenIndex(5);
+                  }
+                }}
+              />
+            )}
 
-        {activeScreenIndex === 6 && (
-          <Screen7Match
-            isBlindMode={isBlindMode}
-            currentRequirement={currentRequirement}
-            onSelectCandidateToHire={handleHireCandidate}
-            onOpenProveIt={(skill) => handleOpenProveIt(skill)}
-          />
-        )}
+            {activeScreenIndex === 4 && (
+              <Screen5Proof
+                onBackToPassport={() => setActiveScreenIndex(1)}
+                onOpenSkillCard={() => setSkillCardModalOpen(true)}
+              />
+            )}
 
-        {activeScreenIndex === 7 && (
-          <Screen8ProjectComplete
-            onViewPassport={() => setActiveScreenIndex(1)}
-            onRestartFlow={() => setActiveScreenIndex(0)}
-          />
+            {activeScreenIndex === 5 && (
+              <Screen6Marketplace
+                onFindTalent={(req) => {
+                  setCurrentRequirement(req);
+                  setActiveScreenIndex(6);
+                }}
+              />
+            )}
+
+            {activeScreenIndex === 6 && (
+              <Screen7Match
+                isBlindMode={isBlindMode}
+                currentRequirement={currentRequirement}
+                onSelectCandidateToHire={handleHireCandidate}
+                onOpenProveIt={(skill) => handleOpenProveIt(skill)}
+              />
+            )}
+
+            {activeScreenIndex === 7 && (
+              <Screen8ProjectComplete
+                onViewPassport={() => setActiveScreenIndex(1)}
+                onRestartFlow={() => setActiveScreenIndex(roleView === 'business' ? 5 : 0)}
+              />
+            )}
+          </>
         )}
       </main>
 
@@ -222,7 +309,7 @@ export default function App() {
         isOpen={perfectSwitchModalOpen}
         onClose={() => setPerfectSwitchModalOpen(false)}
         onSelectProject={(title) => {
-          setActiveScreenIndex(5);
+          setActiveScreenIndex(roleView === 'business' ? 5 : 1);
         }}
       />
 
@@ -235,6 +322,7 @@ export default function App() {
         onSelectScreen={(idx) => setActiveScreenIndex(idx)}
         onOpenPerfectSwitch={() => setPerfectSwitchModalOpen(true)}
         onOpenSkillGap={() => setSkillGapModalOpen(true)}
+        roleView={roleView}
       />
     </div>
   );

@@ -1,6 +1,6 @@
 import React from 'react';
 import { RoleView, UserAccount } from '../types';
-import { ShieldCheck, Eye, EyeOff, Building2, UserCheck, QrCode, LogIn, User } from 'lucide-react';
+import { ShieldCheck, Eye, EyeOff, Building2, UserCheck, QrCode, LogIn, Lock } from 'lucide-react';
 import { SwitchLogo } from './SwitchLogo';
 
 interface NavbarProps {
@@ -35,75 +35,132 @@ export const Navbar: React.FC<NavbarProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         
         {/* Brand Logo with exact SWITCH mark */}
-        <div className="flex items-center space-x-3 cursor-pointer" onClick={() => onNavigateScreen(0)}>
+        <div 
+          className="flex items-center space-x-3 cursor-pointer" 
+          onClick={() => onNavigateScreen(roleView === 'business' ? 5 : 0)}
+        >
           <SwitchLogo size="md" />
         </div>
 
-        {/* Center Quick Navigation Links */}
+        {/* ROLE-RESTRICTED NAVIGATION LINKS */}
         <nav className="hidden md:flex items-center space-x-1 bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800">
-          <button
-            onClick={() => onNavigateScreen(0)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
-              activeScreenIndex === 0 ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            Welcome
-          </button>
-          <button
-            onClick={() => onNavigateScreen(1)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
-              activeScreenIndex === 1 ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            Skill Passport
-          </button>
-          <button
-            onClick={() => onNavigateScreen(2)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
-              activeScreenIndex === 2 ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            30-Min Test
-          </button>
-          <button
-            onClick={() => onNavigateScreen(5)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
-              activeScreenIndex === 5 ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            Marketplace
-          </button>
-          <button
-            onClick={() => onNavigateScreen(6)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
-              activeScreenIndex === 6 ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            AI Match
-          </button>
+          
+          {/* ========================================================
+              FREELANCE TALENT ROLE NAV LINKS (Screens 0, 1, 2, 3, 4)
+             ======================================================== */}
+          {roleView === 'talent' && (
+            <>
+              <button
+                onClick={() => onNavigateScreen(0)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
+                  activeScreenIndex === 0 ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Welcome
+              </button>
+              <button
+                onClick={() => onNavigateScreen(1)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
+                  activeScreenIndex === 1 ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Skill Passport
+              </button>
+              <button
+                onClick={() => onNavigateScreen(2)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
+                  activeScreenIndex === 2 ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                30-Min Test
+              </button>
+              <button
+                onClick={() => onNavigateScreen(3)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
+                  activeScreenIndex === 3 ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                AI Report
+              </button>
+              <button
+                onClick={() => onNavigateScreen(4)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
+                  activeScreenIndex === 4 ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Proof Audit
+              </button>
+            </>
+          )}
+
+          {/* ========================================================
+              BUSINESS HIRER ROLE NAV LINKS (Screens 5, 6, 7)
+             ======================================================== */}
+          {roleView === 'business' && (
+            <>
+              <button
+                onClick={() => onNavigateScreen(5)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
+                  activeScreenIndex === 5 ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                🏢 Marketplace Portal
+              </button>
+              <button
+                onClick={() => onNavigateScreen(6)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
+                  activeScreenIndex === 6 ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                ⚡ Matched Talent
+              </button>
+              <button
+                onClick={() => onNavigateScreen(7)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
+                  activeScreenIndex === 7 ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                🏆 Project Status
+              </button>
+            </>
+          )}
         </nav>
 
         {/* Right Action Bar */}
         <div className="flex items-center space-x-2 sm:space-x-3">
           
-          {/* Blind Portfolio Toggle */}
-          <button
-            onClick={onToggleBlindMode}
-            title="Toggle Blind Mode: hides non-defensible resume bias; focuses on verified skill scores"
-            className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition ${
-              isBlindMode
-                ? 'bg-purple-950/70 border-purple-500/50 text-purple-300 shadow-lg shadow-purple-500/20'
-                : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            {isBlindMode ? <EyeOff className="w-3.5 h-3.5 text-purple-400" /> : <Eye className="w-3.5 h-3.5" />}
-            <span className="hidden sm:inline">{isBlindMode ? 'BLIND: ON' : 'BLIND MODE'}</span>
-          </button>
+          {/* Active Mode Pill Indicator */}
+          <span className={`hidden xl:inline-flex items-center px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider border ${
+            roleView === 'business'
+              ? 'bg-purple-950/80 text-purple-300 border-purple-500/40'
+              : 'bg-indigo-950/80 text-indigo-300 border-indigo-500/40'
+          }`}>
+            {roleView === 'business' ? '🏢 Business Hirer Mode' : '🎨 Freelance Talent Mode'}
+          </span>
 
-          {/* Role Perspective Switcher */}
+          {/* Blind Portfolio Toggle (Talent mode only) */}
+          {roleView === 'talent' && (
+            <button
+              onClick={onToggleBlindMode}
+              title="Toggle Blind Mode: hides resume bias; focuses on verified skill scores"
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition ${
+                isBlindMode
+                  ? 'bg-purple-950/70 border-purple-500/50 text-purple-300 shadow-lg shadow-purple-500/20'
+                  : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              {isBlindMode ? <EyeOff className="w-3.5 h-3.5 text-purple-400" /> : <Eye className="w-3.5 h-3.5" />}
+              <span className="hidden sm:inline">{isBlindMode ? 'BLIND: ON' : 'BLIND MODE'}</span>
+            </button>
+          )}
+
+          {/* Strict Role Switcher Toggle */}
           <div className="flex bg-slate-900 p-1 rounded-xl border border-slate-800">
             <button
-              onClick={() => onToggleRoleView('talent')}
+              onClick={() => {
+                onToggleRoleView('talent');
+                if (activeScreenIndex >= 5) onNavigateScreen(1); // Jump to Talent Passport
+              }}
               className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-bold transition ${
                 roleView === 'talent'
                   ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow'
@@ -114,7 +171,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="hidden sm:inline">Talent</span>
             </button>
             <button
-              onClick={() => onToggleRoleView('business')}
+              onClick={() => {
+                onToggleRoleView('business');
+                if (activeScreenIndex < 5) onNavigateScreen(5); // Jump to Business Marketplace
+              }}
               className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-bold transition ${
                 roleView === 'business'
                   ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow'
@@ -126,7 +186,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           </div>
 
-          {/* Switch Score Badge (for Talent View) */}
+          {/* Switch Score Badge (Talent View only) */}
           {roleView === 'talent' && (
             <div
               onClick={onOpenProveIt}
@@ -160,13 +220,15 @@ export const Navbar: React.FC<NavbarProps> = ({
           )}
 
           {/* Digital Skill Card Button */}
-          <button
-            onClick={onOpenSkillCard}
-            className="p-2 bg-slate-900 hover:bg-slate-800 text-indigo-300 border border-slate-800 rounded-xl transition"
-            title="View Digital Skill Card"
-          >
-            <QrCode className="w-4 h-4" />
-          </button>
+          {roleView === 'talent' && (
+            <button
+              onClick={onOpenSkillCard}
+              className="p-2 bg-slate-900 hover:bg-slate-800 text-indigo-300 border border-slate-800 rounded-xl transition"
+              title="View Digital Skill Card"
+            >
+              <QrCode className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </div>
     </header>
